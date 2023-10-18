@@ -12,12 +12,16 @@ psql:
 	psql -p 5432 -U postgres -d $(database)
 
 create:
-# create database
-#	docker-compose -f $(docker-compose-file) exec postgres \
-#	psql -p 5432 -U postgres \
-#	-c "CREATE DATABASE alchemy;"
+# Ecto create database
 	mix ecto.create
 
+drop:
+# Ecto drop database
+	mix ecto.drop
+
 migrate:
-# migrate Ecto
+# Ecto migrate
 	mix ecto.migrate
+
+reset: drop create migrate
+# Ecto remake database

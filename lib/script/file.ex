@@ -1,9 +1,9 @@
-defmodule Alchemy.File do
+defmodule Alchemy.Script.File do
   @moduledoc """
   File Util.
   """
 
-  @directory ""
+  @directory "/aaa/"
 
   def clean(directory \\ @directory) do
     directory

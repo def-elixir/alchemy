@@ -1,5 +1,5 @@
 
-defmodule Alchemy.Scrape do
+defmodule Alchemy.Script.Scrape do
   @moduledoc """
   Scraping.
   """
