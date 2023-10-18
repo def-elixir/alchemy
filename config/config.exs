@@ -9,4 +9,4 @@ config :alchemy, Alchemy.Repo,
   password: "postgres",
   hostname: "localhost",
   migration_timestamps: [type: :timestamptz],
-  log: true
+  log: false

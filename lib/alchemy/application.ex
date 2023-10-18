@@ -8,10 +8,12 @@ defmodule Alchemy.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      # Starts a worker by calling: Alchemy.Worker.start_link(arg)
+      # {Alchemy.Worker, arg}
       Alchemy.Repo,
     ]
-    # Load env file
     unless Mix.env == :prod do
+      # Load env file
       Dotenv.load
       Mix.Task.run("loadconfig")
     end
