@@ -13,22 +13,20 @@ defmodule Alchemy.File do
 
   def changeset(file, attrs) do
     file
-      |> cast(attrs, [:name])
+      |> cast(attrs, [:name, :contents])
       |> validate_required([:name])
-      |> validate_length([:name], max: 2)
-      |> validate_filename_unique([:name])
+      |> validate_length(:name, max: 100)
+      |> validate_filename_unique()
       |> unique_constraint(:name, name: :files_name_directory_id_index)
   end
 
-  def validate_filename_unique(changeset, field) do
-    case Repo.one(from f in Alchemy.File, where: f.name == ^field and is_nil(f.directory_id)) do
+  def validate_filename_unique(changeset) do
+    name = get_field(changeset, :name)
+    case Repo.one(from f in Alchemy.File, where: f.name == ^name and is_nil(f.directory_id)) do
       nil ->
         changeset
       _ ->
-        add_error(changeset, field, "this file name already exists")
+        add_error(changeset, :name, "file name '#{name}' already exists")
     end
   end
-
 end
-
-# alias Alchemy.{Repo, File, Directory}
