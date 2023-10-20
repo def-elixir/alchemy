@@ -6,7 +6,7 @@ defmodule Alchemy.Archive do
   @file_excluded [".DS_Store"]
 
   def main() do
-    run("/Users/yoshikinakamura/Desktop/back")
+    run("/Users/yoshikinakamura/data/repo/alchemy/mix.exs")
   end
 
   def run(path, directory_id \\ nil) do

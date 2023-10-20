@@ -13,7 +13,7 @@ defmodule Alchemy.Repo.Migrations.CreateFile do
 
     create table(:files) do
       add :name, :string, null: false
-      add :contents, :string, default: nil
+      add :contents, :text, default: nil
       add :directory_id, references(:directories, on_delete: :delete_all), default: nil
       timestamps()
     end
