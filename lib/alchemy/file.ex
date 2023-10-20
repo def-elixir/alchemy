@@ -13,7 +13,7 @@ defmodule Alchemy.File do
 
   def changeset(file, attrs) do
     file
-      |> cast(attrs, [:name, :contents])
+      |> cast(attrs, [:name, :contents, :directory_id])
       |> validate_required([:name])
       |> validate_length(:name, max: 100)
       |> validate_filename_unique()

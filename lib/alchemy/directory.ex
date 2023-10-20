@@ -7,8 +7,8 @@ defmodule Alchemy.Directory do
   schema "directories" do
     field :name, :string
     field :parent_id, :integer
-    has_many :directories, Alchemy.Directory
-    has_many :file, Alchemy.File
+    has_many :subdirectories, Alchemy.Directory, foreign_key: :parent_id
+    has_many :files, Alchemy.File
     timestamps(type: :utc_datetime_usec)
   end
 
