@@ -1,4 +1,4 @@
-defmodule Alchemy.Restore do
+defmodule Alchemy.Storage.Restore do
   import Ecto.Query
   use Ecto.Schema
   alias Alchemy.Directory
@@ -6,16 +6,16 @@ defmodule Alchemy.Restore do
 
   @local_directory "~/data/repo/restore"
 
-  def main() do
-    # Rootディレクトリの取得
-    directory = get_root_directory_by_name("back")
+  def main(path) do
+    # 対象ディレクトリの取得
+    directory = get_root_directory_by_name(path)
     @local_directory
       |> Path.expand()
       |> Path.join(directory.name)
-      |> run_recursive(directory.id)
+      |> restore_recursive(directory.id)
   end
 
-  def run_recursive(path, directory_id) do
+  def restore_recursive(path, directory_id) do
     make_directory(path)
     directory = get_directory_by_id(directory_id)
     directory.files
@@ -23,7 +23,7 @@ defmodule Alchemy.Restore do
     directory.subdirectories
       |> Enum.each(fn sub ->
         path = Path.join(path, sub.name)
-        run_recursive(path, sub.id)
+        restore_recursive(path, sub.id)
       end)
   end
 
@@ -34,7 +34,7 @@ defmodule Alchemy.Restore do
     end
   end
 
-  def  make_directory(path) do
+  def make_directory(path) do
     case File.mkdir_p(path) do
       :ok -> IO.puts("ディレクトの作成に成功しました。: #{path}")
       {:error, message} -> IO.puts("ディレクトの作成に失敗しました。: #{message}")

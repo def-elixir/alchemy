@@ -1,5 +1,5 @@
 
-defmodule Alchemy.Script.Scrape do
+defmodule Alchemy.Script.Scraping do
   @moduledoc """
   Scraping.
   """
@@ -16,7 +16,7 @@ defmodule Alchemy.Script.Scrape do
       |> Enum.map(
         &%{
           name: &1.name,
-          articles: HTTPoison.get!(&1.url).body |> scraping() |> Enum.take(&1.limit)
+          articles: HTTPoison.get!(&1.url).body |> parse_html() |> Enum.take(&1.limit)
         }
       )
       |> Jason.encode!()
@@ -24,7 +24,7 @@ defmodule Alchemy.Script.Scrape do
       |> IO.puts()
   end
 
-  defp scraping(html) do
+  defp parse_html(html) do
     html
       |> Floki.parse_document!()
       |> Floki.find("h1.article-title")

@@ -1,17 +1,17 @@
-defmodule Alchemy.Archive do
+defmodule Alchemy.Storage.Backup do
   alias Alchemy.Directory
-  alias Alchemy.File, as: ArchiveFile
+  alias Alchemy.File, as: BackupFile
   alias Alchemy.Repo
 
   @file_excluded [".DS_Store"]
 
-  def main() do
-    run("/Users/yoshikinakamura/data/repo/alchemy/mix.exs")
+  def main(path) do
+    run(path)
   end
 
   def run(path, directory_id \\ nil) do
     with {:ok, file_info} <- classify_file_type(path),
-         {:ok, result} <- archive(file_info.type, path, directory_id) do
+         {:ok, result} <- backup(file_info.type, path, directory_id) do
           IO.inspect(result)
           if file_info.type == :directory do
             run_recursive(path, result.id)
@@ -36,16 +36,16 @@ defmodule Alchemy.Archive do
     end
   end
 
-  def archive(type, path, directory_id \\ nil)
+  def backup(type, path, directory_id \\ nil)
 
-  def archive(:directory, path, directory_id) do
+  def backup(:directory, path, directory_id) do
     case create_directory(%{ name: Path.basename(path), parent_id: directory_id }) do
       {:ok, directory} -> {:ok, directory}
       {:error, message} -> {:error, message}
     end
   end
 
-  def archive(:regular, path, directory_id) do
+  def backup(:regular, path, directory_id) do
     with {:ok, contents} <- File.read(path),
          {:ok, file} <- create_file(%{ name: Path.basename(path), contents: contents, directory_id: directory_id }) do
           {:ok, file}
@@ -81,8 +81,8 @@ defmodule Alchemy.Archive do
   end
 
   defp file_changeset(attrs) do
-    %ArchiveFile{}
-      |> ArchiveFile.changeset(attrs)
+    %BackupFile{}
+      |> BackupFile.changeset(attrs)
   end
 
   defp insert_file(changeset) do
