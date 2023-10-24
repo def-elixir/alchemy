@@ -6,6 +6,10 @@ up:
 # docker-compose up
 	docker-compose -f $(docker-compose-file) up -d postgres
 
+down:
+# docker-compose down
+	docker-compose -f $(docker-compose-file) down
+
 psql:
 # connect database
 	docker-compose -f $(docker-compose-file) exec postgres \

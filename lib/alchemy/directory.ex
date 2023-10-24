@@ -12,7 +12,6 @@ defmodule Alchemy.Directory do
     timestamps(type: :utc_datetime_usec)
   end
 
-  @spec changeset(any(), any()) :: none()
   def changeset(directory, attrs) do
     directory
       |> cast(attrs, [:name, :parent_id])
@@ -22,7 +21,6 @@ defmodule Alchemy.Directory do
       |> unique_constraint(:name, name: :directories_name_parent_id_index)
   end
 
-  @spec validate_directory_name_unique(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def validate_directory_name_unique(changeset) do
     name = get_field(changeset, :name)
     case Repo.one(from d in Alchemy.Directory, where: d.name == ^name and is_nil(d.parent_id)) do
