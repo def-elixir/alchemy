@@ -40,7 +40,7 @@ defmodule Alchemy.Storage.Debug do
     SELECT \
           r.directory_id, \
           r.directory_name, \
-          r.parent_id, \
+          NULL AS parent_id, \
           (r.path || '/' || f.name)::character varying(255) AS path,
           f.id AS file_id, \
           f.name AS file_name, \
