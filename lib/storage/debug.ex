@@ -21,9 +21,9 @@ defmodule Alchemy.Storage.Debug do
         WHERE root.name = $1 AND root.parent_id IS NULL \
         UNION ALL \
         SELECT sub.id AS sub_id, \
-            sub.name AS sub_name, \
-            sub.parent_id AS sub_parent_id, \
-            (r.path || '/' || sub.name)::character varying(255) AS path \
+               sub.name AS sub_name, \
+               sub.parent_id AS sub_parent_id, \
+               (r.path || '/' || sub.name)::character varying(255) AS path \
         FROM directories AS sub \
         INNER JOIN r ON r.directory_id = sub.parent_id
     ) \
