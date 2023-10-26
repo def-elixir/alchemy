@@ -49,6 +49,18 @@ source ~/.bashrc
 which asdf
 ```
 
+## asdf自体のアップデート
+
+```bash
+asdf update
+```
+
+## すべてのプラグインのアップデート
+
+```bash
+asdf plugin-update --all
+```
+
 ## ElixirとErlangのインストール
 
 ```bash
@@ -102,6 +114,18 @@ asdf global elixir 1.15.7
 ```bash
 asdf current
 iex -v
+```
+
+## アンインストール
+
+インストール済みのバージョンを確認
+```bash
+asdf list
+```
+
+アンインストール
+```bash
+asdf uninstall プラグイン名 バージョン
 ```
 
 ## mix
