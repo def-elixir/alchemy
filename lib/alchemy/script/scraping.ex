@@ -11,7 +11,7 @@ defmodule Alchemy.Script.Scraping do
     ]
   end
 
-  def main() do
+  def get_data() do
     pages()
       |> Enum.map(
         &%{

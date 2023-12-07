@@ -7,6 +7,6 @@ defmodule Mix.Tasks.Scraping do
   @impl Mix.Task
   def run(_) do
     Mix.Task.run("app.start")
-    Alchemy.Script.Scraping.main()
+    Alchemy.Script.Scraping.get_data()
   end
 end

@@ -1,4 +1,4 @@
-docker-compose-file=~/data/repo/shell/docker/docker-compose.yml
+docker-compose-file=~/data/repo/sketch/docker-compose.yml
 database=alchemy
 database-uri=postgres://postgres:postgres@localhost:5432/$(database)
 
