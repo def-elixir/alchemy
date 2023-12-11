@@ -3,11 +3,11 @@ defmodule Alchemy.Script.File do
   File Util.
   """
 
-  @directory "Desctop"
+  @default_directory "~/Desktop"
 
-  def clean(directory \\ @directory) do
+  def cleanup(directory \\ @default_directory) do
     directory
-      |> Path.absname()
+      |> Path.expand()
       |> Path.join("/*")
       |> Path.wildcard()
       |> Enum.filter(&is_file?/1)
