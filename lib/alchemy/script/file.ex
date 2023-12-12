@@ -17,7 +17,19 @@ defmodule Alchemy.Script.File do
       end)
   end
 
-  def is_file?(path) do
+
+  def cleanup_all(directory) do
+    directory
+      |> Path.expand()
+      |> Path.join("/*")
+      |> Path.wildcard()
+      |> Enum.each(fn path ->
+        File.rm_rf!(path)
+        IO.puts("#{path}を削除しました")
+      end)
+  end
+
+  defp is_file?(path) do
     case File.stat(path) do
       {:ok, %File.Stat{type: :regular}} -> true
       _ -> false
