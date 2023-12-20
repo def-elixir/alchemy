@@ -8,37 +8,42 @@ defmodule Alchemy.Script.FileCleaner do
 
   def cleanup(path \\ @default_path) do
     with {:ok, absolute_path} <- to_absolute_path(path),
-         :ok <- validate_path(absolute_path)
+         :ok <- validate_path(absolute_path),
+         entry = absolute_path |> Path.join("/*") |> Path.wildcard() |> Enum.filter(&File.regular?/1),
+         :ok <- confirm_deletion(entry)
     do
-      absolute_path
-      |> Path.join("/*")
-      |> Path.wildcard()
-      |> Enum.filter(&File.regular?/1)
+      entry
       |> Enum.each(fn file ->
         File.rm!(file)
         IO.puts("#{file}: deleted.")
       end)
       :ok
     else
-      {:error, reason} -> {:error, reason}
+      {:error, message} -> {:error, message}
     end
   end
 
   def cleanup_all(path) do
     with {:ok, absolute_path} <- to_absolute_path(path),
-         :ok <- validate_path(absolute_path)
+         :ok <- validate_path(absolute_path),
+         entry = absolute_path |> Path.join("/*") |> Path.wildcard(),
+         :ok <- confirm_deletion(entry)
     do
-      absolute_path
-      |> Path.join("/*")
-      |> Path.wildcard()
+      entry
       |> Enum.each(fn path ->
         File.rm_rf!(path)
         IO.puts("#{path}: deleted.")
       end)
       :ok
     else
-      {:error, reason} -> {:error, reason}
+      {:error, message} -> {:error, message}
     end
+  end
+
+  defp confirm_deletion(entry) do
+    entry |> Enum.each(&IO.puts/1)
+    IO.gets("Do you really want to delete? [Enter]")
+    :ok
   end
 
   defp to_absolute_path(path) when path == "", do: {:error, "Path argument: \"\" not allowed."}
@@ -50,7 +55,7 @@ defmodule Alchemy.Script.FileCleaner do
     do
       :ok
     else
-      {:error, reason} -> {:error, reason}
+      {:error, message} -> {:error, message}
     end
   end
 
