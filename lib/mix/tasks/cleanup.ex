@@ -6,6 +6,6 @@ defmodule Mix.Tasks.Cleanup do
 
   @impl Mix.Task
   def run(_) do
-    Alchemy.Script.File.cleanup()
+    Alchemy.Script.FileCleaner.cleanup()
   end
 end
