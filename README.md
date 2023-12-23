@@ -73,7 +73,7 @@ asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
 バージョンを指定してインストール
 ```bash
 asdf list-all elixir
-asdf install elixir 1.15.7
+asdf install elixir 1.16.0
 ```
 
 ## Erlangのインストール
@@ -81,7 +81,7 @@ asdf install elixir 1.15.7
 バージョンを指定してインストール
 ```bash
 asdf list-all erlang
-asdf install erlang 26.0.2
+asdf install erlang 26.2
 ```
 
 ※パッケージが必要
@@ -94,8 +94,8 @@ sudo apt install libssl-dev automake autoconf libncurses5-dev
 
 作業用ディレクトリで実行
 ```bash
-asdf local erlang 26.0.2
-asdf local elixir 1.15.7
+asdf local elixir 1.16.0
+asdf local erlang 26.2
 ```
 
 バージョン確認
@@ -107,8 +107,8 @@ iex -v
 ## グローバルに設定する場合
 
 ```bash
-asdf global erlang 26.0.2
-asdf global elixir 1.15.7
+asdf global elixir バージョン
+asdf global erlang バージョン
 ```
 
 ```bash
@@ -125,7 +125,8 @@ asdf list
 
 アンインストール
 ```bash
-asdf uninstall プラグイン名 バージョン
+asdf uninstall elixir バージョン
+asdf uninstall erlang バージョン
 ```
 
 ## mix
