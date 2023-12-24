@@ -18,8 +18,6 @@ defmodule Alchemy.Script.FileCleaner do
         IO.puts("#{file}: deleted.")
       end)
       :ok
-    else
-      {:error, message} -> {:error, message}
     end
   end
 
@@ -35,8 +33,6 @@ defmodule Alchemy.Script.FileCleaner do
         IO.puts("#{path}: deleted.")
       end)
       :ok
-    else
-      {:error, message} -> {:error, message}
     end
   end
 
