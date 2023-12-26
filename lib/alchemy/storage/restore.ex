@@ -4,27 +4,19 @@ defmodule Alchemy.Storage.Restore do
   alias Alchemy.Directory
   alias Alchemy.Repo
 
-  @local_directory "~/data/repo/restore"
+  @download_path "~/data/repo/restore"
 
-  def main(path) do
-    # 対象ディレクトリの取得
-    directory = get_root_directory_by_name(path)
-    @local_directory
-      |> Path.expand()
-      |> Path.join(directory.name)
-      |> restore_recursive(directory.id)
+  def download(path) do
+    download_path = @download_path |> Path.expand()
+    root_directory = get_root_directory_by_name(path)
+    download_subdirectory(Path.join(download_path, root_directory.name), root_directory.id)
   end
 
-  def restore_recursive(path, directory_id) do
+  def download_subdirectory(path, directory_id) do
     make_directory(path)
     directory = get_directory_by_id(directory_id)
-    directory.files
-      |> Enum.each(fn f -> Path.join(path, f.name) |> create_file(f.contents) end)
-    directory.subdirectories
-      |> Enum.each(fn sub ->
-        path = Path.join(path, sub.name)
-        restore_recursive(path, sub.id)
-      end)
+    directory.files |> Enum.each(&create_file(Path.join(path, &1.name), &1.contents))
+    directory.subdirectories |> Enum.each(&download_subdirectory(Path.join(path, &1.name), &1.id))
   end
 
   def create_file(path, contents) do
