@@ -1,2 +1,3 @@
-alias Alchemy.Script.{FileCleaner, Scraping}
-alias Alchemy.Storage.{Backup, Restore, Debug}
+alias Alchemy.Script
+alias Alchemy.Storage
+alias Alchemy.TimeCard

@@ -37,7 +37,7 @@ defmodule Alchemy.TimeCard.Clock do
 
   defp save_time(:update, timecard, attrs) do
     case update_time(timecard, attrs) do
-      {:ok, _}  -> {:ok, "update time card: #{timecard.date}/#{timecard.start_time}/#{timecard.end_time}"}
+      {:ok, timecard}  -> {:ok, "update time card: #{timecard.date}/#{timecard.start_time}/#{timecard.end_time}"}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset.errors}
     end
   end
