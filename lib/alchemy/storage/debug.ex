@@ -1,16 +1,15 @@
 defmodule Alchemy.Storage.Debug do
 
   def print(root_directory_name) do
-    case get_directory_tree_(root_directory_name) do
+    case get_directory_tree(root_directory_name) do
       {:ok, %{columns: columns, rows: rows}} ->
-        rows
-          |> Enum.map(fn row -> Enum.zip(columns, row) |> Map.new() end)
+        rows |> Enum.map(fn row -> Enum.zip(columns, row) |> Map.new() end)
       {:error, message} ->
-        IO.puts("#{message}")
+        {:error, message}
     end
   end
 
-  def get_directory_tree_(name) do
+  def get_directory_tree(name) do
     query =
     "WITH RECURSIVE r AS ( \
         SELECT root.id AS directory_id, \
