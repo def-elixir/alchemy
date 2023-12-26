@@ -13,4 +13,12 @@ defmodule Alchemy.Utils.File do
       {:error, reason} -> {:error, reason}
     end
   end
+
+  def stat(path) do
+    case File.stat(path) do
+      {:ok, file_info} -> {:ok, file_info}
+      {:error, :enoent} -> {:error, "No such file or directory"}
+      {:error, reason} -> {:error, reason}
+    end
+  end
 end

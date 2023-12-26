@@ -2,94 +2,69 @@ defmodule Alchemy.Storage.Backup do
   alias Alchemy.Directory
   alias Alchemy.File, as: BackupFile
   alias Alchemy.Repo
+  alias Alchemy.Utils.File, as: FileUtil
 
   @file_excluded [".DS_Store"]
 
-  def main(path) do
-    run(path)
-  end
-
-  def run(path, directory_id \\ nil) do
-    with {:ok, file_info} <- classify_file_type(path),
-         {:ok, result} <- backup(file_info.type, path, directory_id) do
+  def upload(path, directory_id \\ nil) do
+    with {:ok, file_info} <- FileUtil.stat(Path.expand(path)),
+         {:ok, result} <- upload_individually(file_info.type, path, directory_id) do
           IO.inspect(result)
           if file_info.type == :directory do
-            run_recursive(path, result.id)
+            upload_subdirectory(path, result.id)
           end
-    else
-      {:error, message} -> IO.inspect(message.errors, label: "error")
     end
   end
 
-  def run_recursive(entry, directory_id \\ nil) do
-    entry
-      |> File.ls!()
-      |> Enum.reject(fn f -> f in @file_excluded end)
-      |> Enum.each(fn path -> Path.join(entry, path) |> run(directory_id) end)
+  defp upload_subdirectory(parent_path, parent_id) do
+    parent_path
+    |> File.ls!()
+    |> Enum.reject(fn f -> f in @file_excluded end)
+    |> Enum.each(&upload(Path.join(parent_path, &1), parent_id))
   end
 
-  def classify_file_type(path) do
-    case File.stat(path) do
-      {:ok, file_info} -> {:ok, file_info}
-      {:error, :enoent} -> {:error, "file or directory not found"}
-      {:error, message} -> {:error, message}
+  def upload_individually(file_type, path, directory_id \\ nil)
+
+  def upload_individually(:directory, path, directory_id) do
+    with directory = %{ name: Path.basename(path), parent_id: directory_id },
+         {:ok, directory} <- upload_directory(directory)
+    do
+      {:ok, directory}
     end
   end
 
-  def backup(type, path, directory_id \\ nil)
-
-  def backup(:directory, path, directory_id) do
-    case create_directory(%{ name: Path.basename(path), parent_id: directory_id }) do
-      {:ok, directory} -> {:ok, directory}
-      {:error, message} -> {:error, message}
+  def upload_individually(:regular, path, directory_id) do
+    with {:ok, contents} <- FileUtil.read(path),
+         file = %{ name: Path.basename(path), contents: contents, directory_id: directory_id },
+         {:ok, file} <- upload_file(file)
+    do
+      {:ok, file}
     end
   end
 
-  def backup(:regular, path, directory_id) do
-    with {:ok, contents} <- File.read(path),
-         {:ok, file} <- create_file(%{ name: Path.basename(path), contents: contents, directory_id: directory_id }) do
-          {:ok, file}
-    else
-      {:error, message} -> {:error, message}
+  defp upload_directory(attrs) do
+    case insert_directory(attrs) do
+        {:ok, directory} -> {:ok, directory}
+        {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset.errors}
     end
   end
 
-  def create_directory(attrs \\ %{}) do
-    case directory_changeset(attrs) |> insert_directory() do
-      {:ok, directory} -> {:ok, directory}
-      {:error, changeset} -> {:error, changeset}
-    end
-  end
-
-  defp directory_changeset(attrs) do
+  defp insert_directory(attrs) do
     %Directory{}
     |> Directory.changeset(attrs)
+    |> Repo.insert()
   end
 
-  defp insert_directory(changeset) do
-    case Repo.insert(changeset) do
-      {:ok, directory} -> {:ok, directory}
-      {:error, changeset} -> {:error, changeset}
-    end
-  end
-
-  def create_file(attrs \\ %{}) do
-    case file_changeset(attrs) |> insert_file() do
+  defp upload_file(attrs) do
+    case insert_file(attrs) do
       {:ok, file} -> {:ok, file}
-      {:error, changeset} -> {:error, changeset}
+      {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset.errors}
     end
   end
 
-  defp file_changeset(attrs) do
+  defp insert_file(attrs) do
     %BackupFile{}
-      |> BackupFile.changeset(attrs)
+    |> BackupFile.changeset(attrs)
+    |> Repo.insert()
   end
-
-  defp insert_file(changeset) do
-    case Repo.insert(changeset) do
-      {:ok, file} -> {:ok, file}
-      {:error, changeset} -> {:error, changeset}
-    end
-  end
-
 end

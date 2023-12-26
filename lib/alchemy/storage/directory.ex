@@ -17,18 +17,27 @@ defmodule Alchemy.Directory do
       |> cast(attrs, [:name, :parent_id])
       |> validate_required([:name])
       |> validate_length(:name, max: 100)
-      |> validate_directory_name_unique()
+      |> validate_directory_name()
       |> unique_constraint(:name, name: :directories_name_parent_id_index)
   end
 
-  def validate_directory_name_unique(changeset) do
+  def validate_directory_name(changeset) do
     name = get_field(changeset, :name)
-    case Repo.one(from d in Alchemy.Directory, where: d.name == ^name and is_nil(d.parent_id)) do
-      nil ->
-        changeset
-      _ ->
-        add_error(changeset, :name, "directory name '#{name}' already exists")
+    if is_nil(name) do
+      changeset
+    else
+      case check_duplicate_root_directory_name(name) do
+        nil -> changeset
+        {:ok, directory} -> add_error(changeset, :name, "directory name '#{directory.name}' already exists")
+      end
     end
   end
 
+  defp check_duplicate_root_directory_name(name) do
+    query = from d in Alchemy.Directory, where: d.name == ^name and is_nil(d.parent_id), limit: 1
+    case Repo.one(query) do
+      %Alchemy.Directory{} = directory -> {:ok, directory}
+      nil -> nil
+    end
+  end
 end

@@ -58,7 +58,7 @@ defmodule Alchemy.Script.FileCleaner do
   defp path_exists(path) do
     case File.exists?(path) do
       true  -> {:ok, path}
-      false -> {:error, "#{path}: No such path."}
+      false -> {:error, "#{path}: No such file or directory"}
     end
   end
 
