@@ -5,26 +5,22 @@ defmodule Alchemy.TimeCard.Clock do
   alias Alchemy.Utils.Time, as: TimeUtil
 
   def clock_in() do
-    with date = TimeUtil.get_date(),
-         start_time = TimeUtil.get_time(),
-         weekday = TimeUtil.get_weekday()
-    do
-      record = %{date: date, start_time: start_time, weekday: weekday}
-      save_time(:register, record)
-    end
+    date = TimeUtil.get_date()
+    start_time = TimeUtil.get_time()
+    weekday = TimeUtil.get_weekday()
+    record = %{date: date, start_time: start_time, weekday: weekday}
+    save_time(:register, record)
   end
 
   def clock_out() do
-    with date = TimeUtil.get_date(),
-         end_time = TimeUtil.get_time(),
-         weekday = TimeUtil.get_weekday(),
-         record = get_record_by_date(date)
-    do
-      if record do
-        save_time(:update, record, %{end_time: end_time})
-      else
-        save_time(:register, %{date: date, end_time: end_time, weekday: weekday})
-      end
+    date = TimeUtil.get_date()
+    end_time = TimeUtil.get_time()
+    weekday = TimeUtil.get_weekday()
+    record = get_record_by_date(date)
+    if record do
+      save_time(:update, record, %{end_time: end_time})
+    else
+      save_time(:register, %{date: date, end_time: end_time, weekday: weekday})
     end
   end
 

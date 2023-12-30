@@ -6,11 +6,10 @@ defmodule Alchemy.TimeCard.CSV do
   alias Alchemy.Utils.Time, as: TimeUtil
 
   def export() do
-    with {:ok, file} <- file_name() |> FileUtil.open(),
-         start_date = TimeUtil.get_date() |> Date.beginning_of_month(),
-         end_date = TimeUtil.get_date() |> Date.end_of_month(),
-         record_list = get_record_list(start_date, end_date)
-    do
+    with {:ok, file} <- file_name() |> FileUtil.open() do
+      start_date = TimeUtil.get_date() |> Date.beginning_of_month()
+      end_date = TimeUtil.get_date() |> Date.end_of_month()
+      record_list = get_record_list(start_date, end_date)
       write_csv(file, record_list)
     end
   end

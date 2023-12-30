@@ -26,19 +26,14 @@ defmodule Alchemy.Storage.Backup do
   def upload_individually(file_type, path, directory_id \\ nil)
 
   def upload_individually(:directory, path, directory_id) do
-    with directory = %{ name: Path.basename(path), parent_id: directory_id },
-         {:ok, directory} <- upload_directory(directory)
-    do
-      {:ok, directory}
-    end
+    directory = %{name: Path.basename(path), parent_id: directory_id}
+    upload_directory(directory)
   end
 
   def upload_individually(:regular, path, directory_id) do
-    with {:ok, contents} <- FileUtil.read(path),
-         file = %{ name: Path.basename(path), contents: contents, directory_id: directory_id },
-         {:ok, file} <- upload_file(file)
-    do
-      {:ok, file}
+    with {:ok, contents} <- FileUtil.read(path) do
+      file = %{name: Path.basename(path), contents: contents, directory_id: directory_id}
+      upload_file(file)
     end
   end
 
